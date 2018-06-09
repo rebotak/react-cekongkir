@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const client = axios.create({
-  baseURL: `https://swapi.co/api`,
+  baseURL: `http://development.zuragan.com:8494/api/v1/`,
   responseType: 'json'
 });
 
