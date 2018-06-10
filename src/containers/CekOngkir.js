@@ -100,15 +100,16 @@ class CekOngkir extends Component {
     }
 
     return (
-      <div className="cek-ongkir">
+      <div className="cek-ongkir container">
         {cekongkirLoading &&
           <Loader/>
         }
         {!cekongkirLoading &&
-          <div className="form-ongkir d-flex container">
-          <div className="form-origin">
-            <h1>From: {selectedOrigin.name}{selectedOrigin && `(${selectedOrigin.id})`} </h1>
+          <div className="form-ongkir row container">
+            <div className="form-origin col-sm-4 d-flex flex-column">
+              <span className="text-left">From: {selectedOrigin.name}{selectedOrigin && `(${selectedOrigin.id})`} </span>
               <Async
+                className="flex-1"
                 onChange={this.handleChangeOrigin}
                 labelKey="name"
                 valueKey="id"
@@ -116,10 +117,11 @@ class CekOngkir extends Component {
                 value={selectedOrigin}
                 loadOptions={getOptions}
               />
-          </div>
-          <div className="form-destination">
-              <h1>To: {selectedDestination.name}{selectedDestination && `(${selectedDestination.id})`} </h1>
+            </div>
+            <div className="form-destination col-sm-4 d-flex flex-column">
+              <span className="text-left">To: {selectedDestination.name}{selectedDestination && `(${selectedDestination.id})`} </span>
               <Async
+                className="flex-1"
                 onChange={this.handleChangeDestination}
                 labelKey="name"
                 valueKey="id"
@@ -127,8 +129,10 @@ class CekOngkir extends Component {
                 value={selectedDestination}
                 loadOptions={getOptions}
               />
-          </div>
-              <button onClick={this.submitCekOngkir}>Cek Ongkir!</button>
+            </div>
+            <div className="button-wrapper col-sm-4 d-flex align-items-end justify-content-center">
+              <button className="btn btn-primary" onClick={this.submitCekOngkir}>Cek Ongkir!</button>
+            </div>
           </div>
         }
         {dataCekOngkir && !cekongkirLoading &&
