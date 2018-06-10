@@ -20,9 +20,12 @@ class CekOngkir extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedOption:''
+      selectedOrigin:'',
+      selectedDestination:''
     }
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChangeOrigin = this.handleChangeOrigin.bind(this)
+    this.handleChangeDestination = this.handleChangeDestination.bind(this)
+    this.submitCekOngkir = this.submitCekOngkir.bind(this)
   }
 
   componentDidMount(){
@@ -33,22 +36,43 @@ class CekOngkir extends Component {
     //   this.props.loadPeople(currentPage)
     // }else{
     //   this.props.loadPeople(1)
-    // }
+    // }  
   }
 
-  handleChange(selectedOption) {
-    this.setState({ selectedOption });
+  handleChangeOrigin(selectedOption) {
+    this.setState({ selectedOrigin:'' });
     // selectedOption can be null when the `x` (close) button is clicked
     if (selectedOption) {
       console.log(selectedOption)
-      this.setState({selectedOption: selectedOption})
+      this.setState({selectedOrigin: selectedOption})
     }
+  }
+
+  handleChangeDestination(selectedOption) {
+    this.setState({ selectedDestination:'' });
+    // selectedOption can be null when the `x` (close) button is clicked
+    if (selectedOption) {
+      console.log(selectedOption)
+      this.setState({selectedDestination: selectedOption})
+    }
+  }
+  submitCekOngkir(){
+    axios.post(`https://api.zuragan.com/api/v1/pub/ongkir/domestic-costs?sort=asc`,{
+      origin: 151,
+      originType: 'city',
+      destination: 501,
+      destinationType: 'city',
+      weight: 1000,
+      courier: 'jne:pos:tiki:wahana:jnt:pandu:sicepat',
+      length: 0,
+      width: 0,
+      height: 0,
+    })
   }
 
   render() {
     // const {} = this.props
-    const { selectedOption } = this.state;
-
+    const { selectedOrigin, selectedDestination } = this.state;
     const getOptions = (input) => {
       return axios.get(`https://api.zuragan.com/api/v1/pub/cities`,{
           params:{
@@ -66,19 +90,29 @@ class CekOngkir extends Component {
           return { options: result };
         })
     }
+
     return (
       <div className="cek-ongkir">
-        <h1>From: {selectedOption.name}{selectedOption && `(${selectedOption.id})`} </h1>
         {/*<Loader/>*/}
+        <h1>From: {selectedOrigin.name}{selectedOrigin && `(${selectedOrigin.id})`} </h1>
         <Async
-          onChange={this.handleChange}
+          onChange={this.handleChangeOrigin}
           labelKey="name"
           valueKey="id"
           name="form-field-name"
-          value={selectedOption}
+          value={selectedOrigin}
           loadOptions={getOptions}
         />
-
+        <h1>To: {selectedDestination.name}{selectedDestination && `(${selectedDestination.id})`} </h1>
+        <Async
+          onChange={this.handleChangeDestination}
+          labelKey="name"
+          valueKey="id"
+          name="form-field-name"
+          value={selectedDestination}
+          loadOptions={getOptions}
+        />
+        <button onClick={this.submitCekOngkir}>Cek Ongkir!</button>
       </div>
     )
   }
