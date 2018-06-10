@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const client = axios.create({
-  baseURL: `http://development.zuragan.com:8494/api/v1/`,
+  baseURL: `https://api.zuragan.com/api/v1/pub/`,
   responseType: 'json'
 });
 

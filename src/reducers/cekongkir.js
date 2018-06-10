@@ -21,8 +21,7 @@ export default (state = initialState, action) => {
         ...state,
         loading: false,
         loaded: true,
-        data: action.payload.data,
-        list: action.payload.data.results,
+        data: action.payload.data.data.results,
         error: null
       };
     case LOAD_FAIL:
@@ -38,15 +37,15 @@ export default (state = initialState, action) => {
   }
 };
 
-export function load(pageNumber) {
+export function submit(formData) {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     payload: {
       request: {
-        url: `/people?page=${pageNumber}`,
-        method: 'get'
+        url: `ongkir/domestic-costs?sort=asc`,
+        method: 'post',
+        data: formData
       }
     }
   };
 }
-

@@ -3,16 +3,17 @@ import {connect} from 'react-redux'
 import Loader from '../components/Loader'
 import {Async} from 'react-select'
 import axios from 'axios'
-import 'react-select/dist/react-select.css' 
+import 'react-select/dist/react-select.css'
+import {submit as submitOngkir} from '../reducers/cekongkir'
+import _ from 'lodash'
 
 @connect(
   (state) => ({
-    // peopleData: state.people.data,
-    // peopleLoading: state.people.loading,
-    // peopleLoaded: state.people.loaded,
-    // peopleList: state.people.list,
+    dataCekOngkir: state.cekongkir.data,
+    cekongkirLoading: state.cekongkir.loading,
+    cekongkirLoaded: state.cekongkir.loaded,
   }),{
-    // loadPeople,
+    submitOngkir,
   }
 )
 
@@ -36,7 +37,7 @@ class CekOngkir extends Component {
     //   this.props.loadPeople(currentPage)
     // }else{
     //   this.props.loadPeople(1)
-    // }  
+    // }
   }
 
   handleChangeOrigin(selectedOption) {
@@ -57,10 +58,10 @@ class CekOngkir extends Component {
     }
   }
   submitCekOngkir(){
-    axios.post(`https://api.zuragan.com/api/v1/pub/ongkir/domestic-costs?sort=asc`,{
-      origin: 151,
+    this.props.submitOngkir({
+      origin: this.state.selectedOrigin.id,
       originType: 'city',
-      destination: 501,
+      destination: this.state.selectedDestination.id,
       destinationType: 'city',
       weight: 1000,
       courier: 'jne:pos:tiki:wahana:jnt:pandu:sicepat',
@@ -71,8 +72,15 @@ class CekOngkir extends Component {
   }
 
   render() {
-    // const {} = this.props
-    const { selectedOrigin, selectedDestination } = this.state;
+    const {
+      dataCekOngkir,
+      cekongkirLoading,
+      cekongkirLoaded,
+    } = this.props
+    const {
+      selectedOrigin,
+      selectedDestination
+    } = this.state;
     const getOptions = (input) => {
       return axios.get(`https://api.zuragan.com/api/v1/pub/cities`,{
           params:{
@@ -93,26 +101,45 @@ class CekOngkir extends Component {
 
     return (
       <div className="cek-ongkir">
-        {/*<Loader/>*/}
-        <h1>From: {selectedOrigin.name}{selectedOrigin && `(${selectedOrigin.id})`} </h1>
-        <Async
-          onChange={this.handleChangeOrigin}
-          labelKey="name"
-          valueKey="id"
-          name="form-field-name"
-          value={selectedOrigin}
-          loadOptions={getOptions}
-        />
-        <h1>To: {selectedDestination.name}{selectedDestination && `(${selectedDestination.id})`} </h1>
-        <Async
-          onChange={this.handleChangeDestination}
-          labelKey="name"
-          valueKey="id"
-          name="form-field-name"
-          value={selectedDestination}
-          loadOptions={getOptions}
-        />
-        <button onClick={this.submitCekOngkir}>Cek Ongkir!</button>
+        {cekongkirLoading &&
+          <Loader/>
+        }
+        {!cekongkirLoading &&
+          <div className="form-ongkir d-flex container">
+          <div className="form-origin">
+            <h1>From: {selectedOrigin.name}{selectedOrigin && `(${selectedOrigin.id})`} </h1>
+              <Async
+                onChange={this.handleChangeOrigin}
+                labelKey="name"
+                valueKey="id"
+                name="form-field-name"
+                value={selectedOrigin}
+                loadOptions={getOptions}
+              />
+          </div>
+          <div className="form-destination">
+              <h1>To: {selectedDestination.name}{selectedDestination && `(${selectedDestination.id})`} </h1>
+              <Async
+                onChange={this.handleChangeDestination}
+                labelKey="name"
+                valueKey="id"
+                name="form-field-name"
+                value={selectedDestination}
+                loadOptions={getOptions}
+              />
+          </div>
+              <button onClick={this.submitCekOngkir}>Cek Ongkir!</button>
+          </div>
+        }
+        {dataCekOngkir && !cekongkirLoading &&
+          _.map(dataCekOngkir,ongkos => {
+            return (
+              <div className="d-block">
+                {ongkos.etd}, Rp. {ongkos.value}, {ongkos.service} ({ongkos.description}), Kurir: {ongkos.name}
+              </div>
+            )
+          })
+        }
       </div>
     )
   }
